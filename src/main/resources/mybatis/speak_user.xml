@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boco.share.privilege.dao.UserMapper">
+
+	<resultMap type="com.boco.share.privilege.bean.User" id="user">
+		<result column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="HEADPATH" property="headPath" jdbcType="VARCHAR" />
+		<result column="HEADNAME" property="headName" jdbcType="VARCHAR" />
+		<result column="PHONE" property="phone" jdbcType="VARCHAR" />
+		<result column="ACTIVEFLAG" property="activeFlag" jdbcType="VARCHAR" />
+		<result column="MANAGER" property="manager" jdbcType="VARCHAR" />
+		<result column="PASSWORD" property="passWord" jdbcType="VARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="DESCRITION" property="descrition" jdbcType="VARCHAR" />
+	</resultMap>
+		
+	<resultMap type="com.boco.share.privilege.bean.UserAvailable" id="userAvailable">
+		<result column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="VIP" property="vip" jdbcType="VARCHAR" />
+		<result column="EXECFREQUENCY" property="execFrequency" jdbcType="INTEGER" />
+		<result column="EXECTIME" property="execTime" jdbcType="VARCHAR" />
+		<result column="LINEEFFECTIVETIME" property="lineEffectiveTime" jdbcType="VARCHAR" />
+	</resultMap>
+		
+	<select id="loadUsers" parameterType="java.util.HashMap" resultMap="user">
+		select id id, name name, code code, phone phone ,
+		head_path headPath,CONCAT('/headImgs/',t.head_name) headName,
+		active_flag activeFlag, is_manager manager,passWord passWord, 
+		e_mail email,descrition descrition 
+		from ods_s_user t 
+		where 1=1
+
+		<if test="USER_CODE != null and USER_CODE!=''">
+			and t.code like concat('%',#{USER_CODE},'%')	
+		</if>
+
+		<if test="MGR_NAME != null and MGR_NAME!=''">
+			and t.name like concat('%',#{MGR_NAME},'%')	
+		</if>
+  	</select>
+  
+	  <select id="getUserById" parameterType="java.util.HashMap" resultMap="user">
+			select id id, name name, code code, phone phone,
+			head_path headPath,CONCAT('/headImgs/',t.head_name) headName,
+			active_flag activeFlag, is_manager manager,passWord passWord, 
+			e_mail email,descrition descrition 
+			from ods_s_user t 
+			where 1=1
+			<if test="ID != null and ID !=''">
+				and t.id = #{ID}
+			</if>
+	  </select>
+	  
+	  <select id="getUserByCode" resultMap="user" parameterType="String">
+		select id id, name name, code code, phone phone,
+		head_path headPath,CONCAT('/headImgs/',t.head_name) headName,
+		active_flag activeFlag, is_manager manager,passWord passWord from ods_s_user t where 1=1 
+			and t.code = #{code}
+	</select>
+  
+  	<insert id="insert" parameterType="com.boco.share.privilege.bean.User">
+  		insert into ods_s_user(name, code, phone,
+  							   active_flag, is_manager, password,
+  							   e_mail, descrition) 
+  		values (
+  				#{name}, #{code}, #{phone},
+  				'1', '0', #{passWord},
+  				#{email}, #{descrition}
+  		)
+	</insert>
+  
+	<update id="deleteUser" parameterType="String">
+		delete from ods_s_user where id = #{deleteId}
+	</update>
+	
+	 <update id="batchDeleteUsers" parameterType="String">
+        delete from ods_s_user where id in
+        
+       <foreach item="deleteIds" collection="array" open="(" separator="," close=")">
+            	#{deleteIds}
+        </foreach>
+        
+    </update>
+    
+    <update id="update" parameterType="com.boco.share.privilege.bean.User">
+		update ods_s_user t set 
+				<if test="name!=null and name!=''">
+					t.name = #{name}
+				</if>
+				<if test="code!=null and code!=''">
+					,t.code = #{code}
+				</if>
+				<if test="phone!=null and phone!=''">
+					, t.phone = #{phone}
+				</if>
+				<if test="descrition!=null and descrition!=''">
+					, t.descrition = #{descrition}
+				</if>
+				<if test="email!=null and email!=''">
+					, t.e_mail = #{email}
+				</if>
+				<if test="headPath!=null and headPath!=''">
+					, t.head_path = #{headPath}
+				</if>
+				<if test="headName!=null and headName!=''">
+					, t.head_name = #{headName}
+				</if>
+			     where t.id = #{id}
+	</update>
+	<select id="queryUserAvailableByUserId" parameterType="String" resultMap="userAvailable">
+			select id id, is_vip vip, execFrequency execFrequency,
+						DATE_FORMAT(execTime,'%Y-%m-%d') execTime, 
+						DATE_FORMAT(lineEffectiveTime,'%Y-%m-%d') lineEffectiveTime,
+						user_id userId
+			from ods_user_available 
+			where 1=1
+			<if test="userId != null and userId !=''">
+				and user_id = #{userId}
+			</if>
+	</select>
+	  
+	<update id="deleteUserAvailable" parameterType="String">
+		delete from
+		ods_user_available where id = #{userAvailableId}
+	</update>
+
+	<insert id="saveUserAvailable" parameterType="com.boco.share.privilege.bean.UserAvailable">
+		insert into ods_user_available(id, is_vip, execFrequency, execTime, lineEffectiveTime, user_id)
+		values (#{id}, {vip}, {execFrequency}, {execTime}, {lineEffectiveTime}, {userId})
+	</insert>
+
+</mapper>

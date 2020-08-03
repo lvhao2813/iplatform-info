@@ -1,0 +1,68 @@
+########################################################
+###show mybatis SQL for apache loggin
+########################################################
+logging:
+  level:
+    com:
+      boco: debug         
+########################################################
+###mybatis
+########################################################
+mybatis:
+  configuration:
+    aggressive-lazy-loading: 'false'
+    cache-enabled: 'true'
+    default-executor-type: REUSE
+    default-statement-timeout: 25000
+    lazy-loading-enabled: 'false'
+    multiple-result-sets-enabled: 'true'
+  mapper-locations: classpath:mybatis/*.xml 
+########################################################
+###mysql
+########################################################
+spring:
+  jmx:
+    enabled: false
+  datasource:
+    dbcp2:
+      test-on-return: false
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 5
+      max-active: 100
+      max-wait: 60000
+      min-evictable-idle-time-millis: 600000
+      min-idle: 1
+      test-on-borrow: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      validation-query: SELECT 1 FROM DUAL
+    password: epms_cq
+    type: com.alibaba.druid.pool.DruidDataSource
+    # url: jdbc:oracle:thin:@192.168.12.119:1522:ORCL10G
+    url: jdbc:mysql://106.13.132.3:3306/speak?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowMultiQueries=true
+    username: epms_cq
+########################################################
+###THYMELEAF (ThymeleafAutoConfiguration)
+########################################################
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    prefix: classpath:/templates/
+########################################################
+###upload file
+########################################################
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 10MB
+########################################################
+###Operation Configuration
+########################################################
+opertation:
+  default-calculated-year: 1
+
+########################################################
+###
+########################################################
+
